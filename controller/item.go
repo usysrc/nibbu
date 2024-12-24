@@ -19,8 +19,9 @@ func AddItem(c *fiber.Ctx) error {
 		slog.Error(err.Error())
 		return err
 	}
-	err := model.NewItem(c, newItem)
+	err := model.NewItem(newItem)
 	if err != nil {
+		c.Status(http.StatusInternalServerError)
 		return err
 	}
 	err = ListItems(c)
@@ -29,8 +30,9 @@ func AddItem(c *fiber.Ctx) error {
 
 // list the items
 func ListItems(c *fiber.Ctx) error {
-	items, err := model.GetAllItems(c)
+	items, err := model.GetAllItems()
 	if err != nil {
+		c.Status(http.StatusInternalServerError)
 		return err
 	}
 	err = c.Render("list", fiber.Map{
@@ -44,8 +46,9 @@ func ListItems(c *fiber.Ctx) error {
 
 // write the index
 func Index(c *fiber.Ctx) error {
-	items, err := model.GetAllItems(c)
+	items, err := model.GetAllItems()
 	if err != nil {
+		c.Status(http.StatusInternalServerError)
 		return err
 	}
 
@@ -58,7 +61,7 @@ func Index(c *fiber.Ctx) error {
 			slog.Error(err.Error())
 			return err
 		}
-		user, err = model.GetUserByID(c, id)
+		user, err = model.GetUserByID(id)
 		if err != nil {
 			slog.Error(err.Error())
 			return err
@@ -86,7 +89,7 @@ func Single(c *fiber.Ctx) error {
 		slog.Error(err.Error())
 		return err
 	}
-	item, err := model.GetItem(c, param.ID)
+	item, err := model.GetItem(param.ID)
 	if err != nil {
 		slog.Error(err.Error())
 		return err

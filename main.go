@@ -53,6 +53,7 @@ func main() {
 	app.Post("/add-item", controller.AddItem)
 	app.Post("/loginuser", controller.LoginUser)
 	app.Post("/logout", controller.Logout)
+	app.Get("/logout", controller.Logout)
 	app.Get("/register", controller.Register)
 	app.Post("/registeruser", controller.RegisterUser)
 

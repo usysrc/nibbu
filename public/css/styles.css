@@ -37,6 +37,7 @@ textarea {
     margin-bottom: 0.5rem;
 }
 
+input[type="submit"],
 input[type="button"],
 button {
     background-color: #404B69;

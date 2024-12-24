@@ -41,7 +41,7 @@ func RegisterUser(c *fiber.Ctx) error {
 	}
 	registerData.Password = hashedPassword
 
-	err = model.RegisterUser(c, registerData)
+	err = model.RegisterUser(registerData)
 	if err != nil {
 		return c.Render("registerform", fiber.Map{
 			"ErrorDescription": "Could not register user: username already in use.",
@@ -65,7 +65,7 @@ func Login(c *fiber.Ctx) error {
 			slog.Error(err.Error())
 			return err
 		}
-		user, err = model.GetUserByID(c, id)
+		user, err = model.GetUserByID(id)
 		if err != nil {
 			slog.Error(err.Error())
 			return err
@@ -87,7 +87,7 @@ func LoginUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	user, err := model.GetUserByName(c, loginData.Username)
+	user, err := model.GetUserByName(loginData.Username)
 	if err != nil {
 		slog.Error(err.Error())
 		return c.Render("loginform", fiber.Map{
@@ -108,7 +108,7 @@ func LoginUser(c *fiber.Ctx) error {
 	sess.Set("userID", user.ID)
 	sess.Save()
 	user.LoggedIn = true
-
+	c.Response().Header.Add("hx-redirect", "/")
 	return c.Render("loginform", fiber.Map{
 		"User": user,
 	})
@@ -118,5 +118,5 @@ func Logout(c *fiber.Ctx) error {
 	if sess, ok := c.Locals("session").(*session.Session); ok {
 		sess.Destroy()
 	}
-	return c.Render("loginform", fiber.Map{})
+	return c.Render("login", fiber.Map{}, "layout")
 }
