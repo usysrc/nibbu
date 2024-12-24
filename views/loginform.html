@@ -1,0 +1,19 @@
+<div id="login">
+    {{ if .User.LoggedIn }}
+    Hello, {{ .User.Username }}!
+    <form hx-boost="true" hx-post="/logout" hx-ext="json" hx-target="#login" hx-swap="innerHTML">
+        <button>logout</button>
+    </form>
+    {{ else }}
+    <form hx-boost="true" hx-post="/loginuser" hx-ext="json" hx-target="#login" hx-swap="innerHTML">
+        Username
+        <input type="text" name="username" placeholder="" required>
+        Password
+        <input type="password" name="password" placeholder="" required>
+        <button>login</button>
+        {{ if .LoginFailed }}
+        <div style="color:#f00">Login Failed! Please check username and password.</div>
+        {{ end }}
+    </form>
+    {{ end }}
+</div>

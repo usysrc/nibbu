@@ -1,0 +1,10 @@
+services:
+  app:
+    hostname: usystack-app
+    container_name: usystack-app
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data.db:/app/data.db

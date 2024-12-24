@@ -1,0 +1,16 @@
+<h1>
+    Items
+</h1>
+{{ if not .User.LoggedIn }}
+<a href="/login">Login</a>
+<a href="/register">Register</a>
+{{ end }}
+<br>
+<br>
+<form hx-boost="true" hx-post="/add-item" hx-ext="json" hx-target="#list" hx-swap="innerHTML">
+    <textarea name="name" placeholder="Item Name" required rows="10"></textarea>
+    <button>Add New Item</button>
+</form>
+<div id="list">
+    {{ template "list" . }}
+</div>

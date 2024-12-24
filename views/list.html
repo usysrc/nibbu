@@ -1,0 +1,8 @@
+<h2>
+    Items List
+</h2>
+<ul>
+    {{ range .Items }}
+    <li><a href="/item/{{ .ID }}">{{ .ID }}</a></li>
+    {{ end }}
+</ul>
