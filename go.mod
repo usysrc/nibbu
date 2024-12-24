@@ -1,4 +1,4 @@
-module github.com/usysrc/usystack
+module github.com/usysrc/nibbu
 
 go 1.23
 

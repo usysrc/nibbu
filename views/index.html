@@ -1,16 +1,36 @@
+<pre>
+(\/)
+(='')_旦
+</pre>
 <h1>
-    Items
+    nibbu
 </h1>
+<a href="/trending">Trending</a>
 {{ if not .User.LoggedIn }}
-<a href="/login">Login</a>
-<a href="/register">Register</a>
+| <a href="/login">Login</a>
+| <a href="/register">Register</a>
 {{ end }}
-<br>
-<br>
-<form hx-boost="true" hx-post="/add-item" hx-ext="json" hx-target="#list" hx-swap="innerHTML">
+<p>Nibbu is a tiny and cozy blogging platform.</p>
+<ul>
+    <li>no ads, minimal js, minimal cookies</li>
+    <li>rss</li>
+    <li>themes</li>
+    <li>tiny api</li>
+    <li>private blogs</li>
+    <li>lists</li>
+    <li>custom domains</li>
+    <li>export</li>
+</ul>
+<!-- <form hx-boost="true" hx-post="/add-item" hx-ext="json" hx-target="#list" hx-swap="innerHTML">
     <textarea name="name" placeholder="Item Name" required rows="10"></textarea>
     <button>Add New Item</button>
-</form>
-<div id="list">
+</form> -->
+<!-- <div id="list">
     {{ template "list" . }}
-</div>
+</div> -->
+<p>
+    <i>Grab a cup, relax, and enjoy the warmth of words.</i>
+</p>
+<footer>
+    <p>made by <a href="https://usysrc.dev/">usysrc</a></p>
+</footer>

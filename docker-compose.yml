@@ -1,7 +1,7 @@
 services:
   app:
-    hostname: usystack-app
-    container_name: usystack-app
+    hostname: nibbu-app
+    container_name: nibbu-app
     build:
       context: .
     ports:

@@ -5,7 +5,6 @@ Palette:
 #00818A
 */
 
-
 body {
     background-color: #283149;
     color: #F9F9F9;
@@ -15,6 +14,10 @@ body {
 a {
     color: #00818A;
     text-decoration: none;
+}
+
+a>pre {
+    color: #F9F9F9
 }
 
 main {
@@ -49,4 +52,13 @@ button {
 button:hover {
     background-color: #00818A;
     cursor: pointer;
+}
+
+footer {
+    font-style: italic;
+}
+
+pre {
+    font-size: large;
+    font-weight: normal;
 }

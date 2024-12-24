@@ -7,7 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
-	"github.com/usysrc/usystack/model"
+	"github.com/usysrc/nibbu/model"
 	"golang.org/x/crypto/bcrypt"
 )
 

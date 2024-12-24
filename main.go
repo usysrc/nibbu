@@ -10,10 +10,10 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	slogfiber "github.com/samber/slog-fiber"
 
-	"github.com/usysrc/usystack/controller"
-	"github.com/usysrc/usystack/filter"
-	"github.com/usysrc/usystack/middleware"
-	"github.com/usysrc/usystack/model"
+	"github.com/usysrc/nibbu/controller"
+	"github.com/usysrc/nibbu/filter"
+	"github.com/usysrc/nibbu/middleware"
+	"github.com/usysrc/nibbu/model"
 )
 
 func main() {
@@ -55,6 +55,11 @@ func main() {
 	app.Post("/logout", controller.Logout)
 	app.Get("/register", controller.Register)
 	app.Post("/registeruser", controller.RegisterUser)
+
+	// Add the 404 handler
+	app.Use(func(c *fiber.Ctx) error {
+		return c.Render("404", fiber.Map{}, "layout")
+	})
 
 	// Start server
 	if err := app.Listen(":3000"); err != nil {
