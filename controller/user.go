@@ -109,9 +109,7 @@ func LoginUser(c *fiber.Ctx) error {
 	sess.Save()
 	user.LoggedIn = true
 	c.Response().Header.Add("hx-redirect", "/")
-	return c.Render("loginform", fiber.Map{
-		"User": user,
-	})
+	return nil
 }
 
 func Logout(c *fiber.Ctx) error {

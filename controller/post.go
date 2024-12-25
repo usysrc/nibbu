@@ -3,15 +3,13 @@ package controller
 import (
 	"log/slog"
 	"net/http"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/usysrc/nibbu/model"
 )
 
 // add an item to the db
-func AddItem(c *fiber.Ctx) error {
+func AddPost(c *fiber.Ctx) error {
 	slog.Debug(string(c.Body()))
 	var newItem model.Item
 	if err := c.BodyParser(&newItem); err != nil {
@@ -24,12 +22,12 @@ func AddItem(c *fiber.Ctx) error {
 		c.Status(http.StatusInternalServerError)
 		return err
 	}
-	err = ListItems(c)
+	err = ListPosts(c)
 	return err
 }
 
 // list the items
-func ListItems(c *fiber.Ctx) error {
+func ListPosts(c *fiber.Ctx) error {
 	items, err := model.GetAllItems()
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
@@ -38,41 +36,6 @@ func ListItems(c *fiber.Ctx) error {
 	err = c.Render("list", fiber.Map{
 		"Items": items,
 	})
-	if err != nil {
-		slog.Error(err.Error())
-	}
-	return err
-}
-
-// write the index
-func Index(c *fiber.Ctx) error {
-	items, err := model.GetAllItems()
-	if err != nil {
-		c.Status(http.StatusInternalServerError)
-		return err
-	}
-
-	sess := c.Locals("session").(*session.Session)
-	userID := sess.Get("userID")
-	user := &model.User{}
-	if userID != nil {
-		id, err := strconv.Atoi(userID.(string))
-		if err != nil {
-			slog.Error(err.Error())
-			return err
-		}
-		user, err = model.GetUserByID(id)
-		if err != nil {
-			slog.Error(err.Error())
-			return err
-		}
-		user.LoggedIn = true
-	}
-
-	err = c.Render("index", fiber.Map{
-		"Items": items,
-		"User":  user,
-	}, "layout")
 	if err != nil {
 		slog.Error(err.Error())
 	}
@@ -102,4 +65,9 @@ func Single(c *fiber.Ctx) error {
 		return err
 	}
 	return nil
+}
+
+// render the write page
+func Write(c *fiber.Ctx) error {
+	return c.Render("write", fiber.Map{}, "layout")
 }

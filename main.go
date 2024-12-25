@@ -37,7 +37,7 @@ func main() {
 	app.Static("/", "./public")
 
 	// Add structured logging middleware
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{}))
 	app.Use(slogfiber.New(logger))
 
 	// Add the session middleware
@@ -50,12 +50,13 @@ func main() {
 	app.Get("/", controller.Index)
 	app.Get("/login", controller.Login)
 	app.Get("/item/:id", middleware.AuthMiddleware, controller.Single)
-	app.Post("/add-item", controller.AddItem)
+	app.Post("/add-item", controller.AddPost)
 	app.Post("/loginuser", controller.LoginUser)
 	app.Post("/logout", controller.Logout)
 	app.Get("/logout", controller.Logout)
 	app.Get("/register", controller.Register)
 	app.Post("/registeruser", controller.RegisterUser)
+	app.Get("/write", controller.Write)
 
 	// Add the 404 handler
 	app.Use(func(c *fiber.Ctx) error {
