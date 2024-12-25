@@ -20,11 +20,13 @@ func Connect() {
 	// load 'init.sql' and execute it
 	file, err := os.ReadFile("init.sql")
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("init.sql: " + err.Error())
+		panic("SQL error")
 	}
 	_, err = db.Exec(string(file))
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("init.sql:" + err.Error())
+		panic("SQL error")
 	}
 }
 

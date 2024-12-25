@@ -11,13 +11,13 @@ import (
 // add an item to the db
 func AddPost(c *fiber.Ctx) error {
 	slog.Debug(string(c.Body()))
-	var newItem model.Item
+	var newItem model.Post
 	if err := c.BodyParser(&newItem); err != nil {
 		c.Status(http.StatusUnprocessableEntity)
 		slog.Error(err.Error())
 		return err
 	}
-	err := model.NewItem(newItem)
+	err := model.NewPost(newItem)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
 		return err
@@ -28,7 +28,7 @@ func AddPost(c *fiber.Ctx) error {
 
 // list the items
 func ListPosts(c *fiber.Ctx) error {
-	items, err := model.GetAllItems()
+	items, err := model.GetAllPosts()
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
 		return err
@@ -52,7 +52,7 @@ func Single(c *fiber.Ctx) error {
 		slog.Error(err.Error())
 		return err
 	}
-	item, err := model.GetItem(param.ID)
+	item, err := model.GetPost(param.ID)
 	if err != nil {
 		slog.Error(err.Error())
 		return err

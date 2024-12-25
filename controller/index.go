@@ -12,7 +12,7 @@ import (
 
 // write the index
 func Index(c *fiber.Ctx) error {
-	items, err := model.GetAllItems()
+	items, err := model.GetAllPosts()
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
 		return err

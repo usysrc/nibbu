@@ -118,3 +118,17 @@ func Logout(c *fiber.Ctx) error {
 	}
 	return c.Render("login", fiber.Map{}, "layout")
 }
+
+type Subdomain string
+
+func GetAllSubdomains() ([]Subdomain, error) {
+	users, err := model.GetAllUsers()
+	if err != nil {
+		return nil, err
+	}
+	domains := []Subdomain{}
+	for _, user := range users {
+		domains = append(domains, Subdomain(user.Username))
+	}
+	return domains, err
+}

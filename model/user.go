@@ -23,7 +23,7 @@ type User struct {
 }
 
 func RegisterUser(registerData RegisterData) error {
-	insertQuery := `INSERT INTO users (username, password) VALUES (?, ?)`
+	insertQuery := `INSERT INTO user (username, password) VALUES (?, ?)`
 	_, err := db.Exec(insertQuery, registerData.Username, registerData.Password)
 	if err != nil {
 		slog.Error(err.Error())
@@ -33,7 +33,7 @@ func RegisterUser(registerData RegisterData) error {
 }
 
 func GetUserByName(username string) (*User, error) {
-	rows, err := db.Query("SELECT id,username, password FROM users where username = ($1)", username)
+	rows, err := db.Query("SELECT id,username, password FROM user where username = ($1)", username)
 	if err != nil {
 		slog.Error(err.Error())
 		return nil, err
@@ -54,7 +54,7 @@ func GetUserByName(username string) (*User, error) {
 }
 
 func GetUserByID(id int) (*User, error) {
-	rows, err := db.Query("SELECT id,username, password FROM users where id = ($1)", id)
+	rows, err := db.Query("SELECT id,username, password FROM user WHERE id = ($1)", id)
 	if err != nil {
 		slog.Error(err.Error())
 		return nil, err
@@ -72,4 +72,24 @@ func GetUserByID(id int) (*User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func GetAllUsers() ([]User, error) {
+	rows, err := db.Query("SELECT id, username, password FROM user")
+	if err != nil {
+		slog.Error(err.Error())
+		return nil, err
+	}
+	defer rows.Close()
+	var users []User
+	for rows.Next() {
+		user := User{}
+		err = rows.Scan(&user.ID, &user.Username, &user.Password)
+		if err != nil {
+			slog.Error(err.Error())
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	return users, nil
 }

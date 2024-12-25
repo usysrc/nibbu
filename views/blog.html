@@ -1,0 +1,5 @@
+{{ range .Posts }}
+{{ .Name }}
+{{ .Content | markdown }}
+{{ .Date }}
+{{ end }}
