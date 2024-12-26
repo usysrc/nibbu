@@ -20,5 +20,5 @@
 # Go workspace file
 go.work
  
-# Don't check in the database
-data.db
+# Don't check in any database
+*.db
