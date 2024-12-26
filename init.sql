@@ -20,5 +20,5 @@ CREATE TABLE IF NOT EXISTS post (
 );
 
 -- seed the db
-INSERT into user (username,password) VALUES ('test', 'p@ssword');
-INSERT into post (name,content,url,author,date) VALUES ('my first blog post','hello world', 'my-first-blog-post', 1, "2021-12-09T16:34:04Z");
+-- INSERT into user (username,password) VALUES ('test', 'vs');
+-- INSERT into post (name,content,url,author,date) VALUES ('my first blog post','hello world', 'my-first-blog-post', 1, "2021-12-09T16:34:04Z");

@@ -7,12 +7,36 @@ import (
 )
 
 type Post struct {
-	ID      int           `json:"id"`
-	Name    string        `json:"name"`
-	Content template.HTML `json:"content"`
-	URL     template.URL  `json:"url"`
-	Author  string        `json:"author"`
-	Date    string        `json:"string"`
+	ID        int           `json:"id"`
+	Name      string        `json:"name"`
+	Content   template.HTML `json:"content"`
+	URL       template.URL  `json:"url"`
+	Author    string        `json:"author"`
+	Date      string        `json:"string"`
+	Published string        `json:"published"`
+}
+
+func GetAllPostsFromUser(user string) ([]Post, error) {
+	rows, err := db.Query("SELECT id, name, content, url, author, date FROM post WHERE author = ($1)", user)
+	if err != nil {
+		slog.Error(err.Error())
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []Post
+	for rows.Next() {
+		post := Post{}
+		err := rows.Scan(&post.ID, &post.Name, &post.Content, &post.URL, &post.Author, &post.Date)
+		if err != nil {
+			slog.Error(err.Error())
+		}
+		if err != nil {
+			slog.Error(err.Error())
+		}
+		posts = append(posts, post)
+	}
+	return posts, nil
 }
 
 func GetAllPosts() ([]Post, error) {
@@ -39,7 +63,23 @@ func GetAllPosts() ([]Post, error) {
 }
 
 func NewPost(newPost Post) error {
-	_, err := db.Exec("INSERT into post (name) VALUES ($1)", newPost.Name)
+	_, err := db.Exec("INSERT INTO post (name, content, url, author, date) VALUES ($1, $2, $3, $4, $5)",
+		newPost.Name, newPost.Content, newPost.URL, newPost.Author, newPost.Date)
+	if err != nil {
+		return err
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdatePost(post Post) error {
+	_, err := db.Exec(`
+		UPDATE post
+		SET name = ?, content = ?, url = ?, author = ?, date = ?
+		WHERE id = ?`,
+		post.Name, post.Content, post.URL, post.Author, post.Date, post.ID) // Assuming 'id' is the unique identifier
 	if err != nil {
 		return err
 	}
@@ -47,22 +87,43 @@ func NewPost(newPost Post) error {
 }
 
 func GetPost(id int) (*Post, error) {
-	rows, err := db.Query("SELECT id, name FROM items where id = ($1)", id)
+	rows, err := db.Query("SELECT id, name, content, url, author, date FROM post where id = ($1)", id)
 	if err != nil {
 		slog.Error(err.Error())
 		return nil, err
 	}
 	defer rows.Close()
-	var item Post
+	var post Post
 	if !rows.Next() {
-		err := fmt.Errorf("Item not found.")
+		err := fmt.Errorf("Post not found.")
 		slog.Error(err.Error())
 		return nil, err
 	}
-	err = rows.Scan(&item.ID, &item.Name)
+	err = rows.Scan(&post.ID, &post.Name, &post.Content, &post.URL, &post.Author, &post.Date)
 	if err != nil {
 		slog.Error(err.Error())
 		return nil, err
 	}
-	return &item, nil
+	return &post, nil
+}
+
+func GetPostByUrl(url string) (*Post, error) {
+	rows, err := db.Query("SELECT id, name, content, url, author, date FROM post where url = ($1)", url)
+	if err != nil {
+		slog.Error(err.Error())
+		return nil, err
+	}
+	defer rows.Close()
+	var post Post
+	if !rows.Next() {
+		err := fmt.Errorf("Post not found.")
+		slog.Error(err.Error())
+		return nil, err
+	}
+	err = rows.Scan(&post.ID, &post.Name, &post.Content, &post.URL, &post.Author, &post.Date)
+	if err != nil {
+		slog.Error(err.Error())
+		return nil, err
+	}
+	return &post, nil
 }

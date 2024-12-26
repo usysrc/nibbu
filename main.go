@@ -27,6 +27,7 @@ func main() {
 	// Add the markdown filter
 	engine.AddFuncMap(map[string]any{
 		"markdown": filter.MarkdownFilter,
+		"date":     filter.Date,
 	})
 	engine.Reload(true)
 
@@ -100,14 +101,16 @@ func setupDefaultApp(engine *html.Engine) *fiber.App {
 	// Define routes
 	defaultApp.Get("/", controller.Index)
 	defaultApp.Get("/login", controller.Login)
-	defaultApp.Get("/item/:id", middleware.AuthMiddleware, controller.Single)
-	defaultApp.Post("/add-item", controller.AddPost)
+	defaultApp.Get("/posts/edit/:url", middleware.AuthMiddleware, controller.EditPost)
+	defaultApp.Post("/posts", controller.CreatePost)
+	defaultApp.Put("/posts", controller.UpdatePost)
 	defaultApp.Post("/loginuser", controller.LoginUser)
 	defaultApp.Post("/logout", controller.Logout)
 	defaultApp.Get("/logout", controller.Logout)
 	defaultApp.Get("/register", controller.Register)
 	defaultApp.Post("/registeruser", controller.RegisterUser)
-	defaultApp.Get("/write", controller.Write)
+	defaultApp.Get("/posts/new", middleware.AuthMiddleware, controller.NewPost)
+	defaultApp.Get("/posts", controller.Posts)
 
 	// Add the 404 handler
 	// defaultApp.Use(func(c *fiber.Ctx) error {

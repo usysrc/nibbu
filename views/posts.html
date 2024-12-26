@@ -1,0 +1,14 @@
+<pre>
+(\/)
+(=>>)_旦
+</pre>
+
+<h1>Posts</h1>
+{{ template "navigation" . }}
+<ul>
+    {{ range .Posts }}
+    <li>{{ .Date | date }} <a href="/posts/edit/{{ .URL }}">{{ .Name }}</a></li>
+    {{ end }}
+</ul>
+<hr>
+<a href="/posts/new"><button>New Post</button></a>

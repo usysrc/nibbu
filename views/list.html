@@ -1,8 +1,8 @@
 <h2>
-    Items List
+    Posts List
 </h2>
 <ul>
-    {{ range .Items }}
-    <li><a href="/item/{{ .ID }}">{{ .ID }}</a></li>
+    {{ range .Posts }}
+    <li><a href="/posts/{{ .ID }}">{{ .ID }}</a></li>
     {{ end }}
 </ul>
