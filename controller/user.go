@@ -48,7 +48,24 @@ func RegisterUser(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Render("registerform", fiber.Map{})
+	user, err := model.GetUserByName(registerData.Username)
+	if err != nil {
+		slog.Error(err.Error())
+		return c.Render("loginform", fiber.Map{
+			"LoginFailed": true,
+		})
+	}
+
+	sess, ok := c.Locals("session").(*session.Session)
+	if !ok {
+		return c.Render("loginform", fiber.Map{})
+	}
+	sess.Set("userID", user.ID)
+	sess.Save()
+	user.LoggedIn = true
+
+	c.Response().Header.Add("hx-redirect", "/")
+	return nil
 }
 
 // the login page

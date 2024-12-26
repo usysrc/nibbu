@@ -3,8 +3,10 @@ package controller
 import (
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/usysrc/nibbu/model"
 )
 
@@ -69,5 +71,25 @@ func Single(c *fiber.Ctx) error {
 
 // render the write page
 func Write(c *fiber.Ctx) error {
-	return c.Render("write", fiber.Map{}, "layout")
+
+	sess := c.Locals("session").(*session.Session)
+	userID := sess.Get("userID")
+	user := &model.User{}
+	if userID != nil {
+		id, err := strconv.Atoi(userID.(string))
+		if err != nil {
+			slog.Error(err.Error())
+			return err
+		}
+		user, err = model.GetUserByID(id)
+		if err != nil {
+			slog.Error(err.Error())
+			return err
+		}
+		user.LoggedIn = true
+	}
+
+	return c.Render("write", fiber.Map{
+		"User": user,
+	}, "layout")
 }
