@@ -57,8 +57,10 @@ func CreatePost(c *fiber.Ctx) error {
 		c.Status(http.StatusInternalServerError)
 		return err
 	}
-	err = ListPosts(c)
-	return err
+
+	c.Response().Header.Add("hx-redirect", "/posts/edit/"+string(newPost.URL))
+
+	return nil
 }
 
 func UpdatePost(c *fiber.Ctx) error {
@@ -95,8 +97,8 @@ func UpdatePost(c *fiber.Ctx) error {
 		c.Status(http.StatusInternalServerError)
 		return err
 	}
-	err = ListPosts(c)
-	return err
+	c.SendString("Saved successfully.")
+	return nil
 }
 
 // list the items

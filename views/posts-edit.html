@@ -1,14 +1,17 @@
 <pre>
-    (\/)
-    (=..)_旦
-    </pre>
+(\/)
+(=..)_旦
+</pre>
 
 <h1>Edit Post</h1>
 {{ template "navigation" . }}
 
+<br>
 <form hx-boost="true" hx-put="/posts" hx-ext="json" hx-target="#status" hx-swap="innerHTML">
     <input type="hidden" value="{{ .Post.ID }}" name="id">
+    <label>Title</label>
     <input type="text" name="name" required value="{{ .Post.Name }}">
+    <label>Content</label>
     <textarea name="content" placeholder="..." required rows="20">{{ .Post.Content }}</textarea>
     <button>Save</button>
 </form>

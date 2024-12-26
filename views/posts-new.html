@@ -6,8 +6,11 @@
 <h1>New Post</h1>
 {{ template "navigation" . }}
 
+<br>
 <form hx-boost="true" hx-post="/posts" hx-ext="json" hx-target="#status" hx-swap="innerHTML">
+    <label>Title</label>
     <input type="text" name="name" required value="{{ .Post.Name }}">
+    <label>Content</label>
     <textarea name="content" placeholder="..." required rows="20">{{ .Post.Content }}</textarea>
     <button>Save</button>
 </form>
