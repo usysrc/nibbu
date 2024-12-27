@@ -8,11 +8,12 @@
 
 <br>
 <form hx-boost="true" hx-post="/posts" hx-ext="json" hx-target="#status" hx-swap="innerHTML">
+    <button>Save</button>
+    <br>
     <label>Title</label>
     <input type="text" name="name" required value="{{ .Post.Name }}">
     <label>Content</label>
     <textarea name="content" placeholder="..." required rows="20">{{ .Post.Content }}</textarea>
-    <button>Save</button>
 </form>
 <div id="status">
 

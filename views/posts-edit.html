@@ -8,13 +8,19 @@
 
 <br>
 <form hx-boost="true" hx-put="/posts" hx-ext="json" hx-target="#status" hx-swap="innerHTML">
+    <button hx-delete="/posts/delete/{{ .Post.ID }}" hx-target="#status"
+        hx-confirm="Are you sure you want to delete this?">Delete</button>
+    <button hx-patch="/posts" hx-ext="json" hx-target="#status" hx-swap="innerHTML">Publish</button>
+    <button>Save</button>
+    <br>
+    <input type="hidden" value="{{ .Post.Date }}" name="date">
     <input type="hidden" value="{{ .Post.ID }}" name="id">
     <label>Title</label>
     <input type="text" name="name" required value="{{ .Post.Name }}">
     <label>Content</label>
     <textarea name="content" placeholder="..." required rows="20">{{ .Post.Content }}</textarea>
-    <button>Save</button>
 </form>
+
 <div id="status">
 
 </div>

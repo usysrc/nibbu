@@ -68,9 +68,6 @@ func NewPost(newPost Post) error {
 	if err != nil {
 		return err
 	}
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -108,7 +105,7 @@ func GetPost(id int) (*Post, error) {
 }
 
 func GetPostByUrl(url string) (*Post, error) {
-	rows, err := db.Query("SELECT id, name, content, url, author, date FROM post where url = ($1)", url)
+	rows, err := db.Query("SELECT id, name, content, url, author, date FROM post WHERE url = ($1)", url)
 	if err != nil {
 		slog.Error(err.Error())
 		return nil, err
@@ -126,4 +123,24 @@ func GetPostByUrl(url string) (*Post, error) {
 		return nil, err
 	}
 	return &post, nil
+}
+
+func DeletePost(id int) error {
+	query := "DELETE FROM post WHERE id = ?"
+	result, err := db.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("could not execute delete query: %w", err)
+	}
+
+	// Check the number of affected rows (optional)
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("could not fetch affected rows: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no post found with ID %d", id)
+	}
+
+	return nil
 }

@@ -89,7 +89,7 @@ func UpdatePost(c *fiber.Ctx) error {
 	}
 
 	post.Author = user.Username
-	// newPost.Date = time.Now().Format("2006-01-02 15:04:05")
+	// post.Date = time.Now().Format("2006-01-02 15:04:05")
 	post.URL = template.URL(customURLEncode(post.Name))
 
 	err := model.UpdatePost(post)
@@ -225,4 +225,20 @@ func Posts(c *fiber.Ctx) error {
 		"User":  user,
 		"Posts": posts,
 	}, "layout")
+}
+
+func DeletePost(c *fiber.Ctx) error {
+	idString := c.Params("id")
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		return err
+	}
+	slog.Info("id is " + strconv.Itoa(id))
+	err = model.DeletePost(id)
+	if err != nil {
+		slog.Error(err.Error())
+		return c.SendString("Something went wrong while deleting.")
+	}
+	c.Response().Header.Add("hx-redirect", "/posts")
+	return nil
 }
