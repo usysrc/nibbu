@@ -12,7 +12,7 @@ import (
 
 // write the index
 func Index(c *fiber.Ctx) error {
-	items, err := model.GetAllPosts()
+	posts, err := model.GetAllPosts()
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
 		return err
@@ -36,7 +36,7 @@ func Index(c *fiber.Ctx) error {
 	}
 
 	err = c.Render("index", fiber.Map{
-		"Items": items,
+		"Posts": posts,
 		"User":  user,
 	}, "layout")
 	if err != nil {

@@ -21,7 +21,7 @@ func customURLEncode(input string) string {
 	return url.QueryEscape(input)
 }
 
-// add an item to the db
+// add a post to the db
 func CreatePost(c *fiber.Ctx) error {
 	slog.Debug(string(c.Body()))
 	var newPost model.Post
@@ -101,7 +101,7 @@ func UpdatePost(c *fiber.Ctx) error {
 	return nil
 }
 
-// list the items
+// list the posts
 func ListPosts(c *fiber.Ctx) error {
 	posts, err := model.GetAllPosts()
 	if err != nil {
@@ -109,7 +109,7 @@ func ListPosts(c *fiber.Ctx) error {
 		return err
 	}
 	err = c.Render("list", fiber.Map{
-		"Items": posts,
+		"Posts": posts,
 	})
 	if err != nil {
 		slog.Error(err.Error())
@@ -117,7 +117,7 @@ func ListPosts(c *fiber.Ctx) error {
 	return err
 }
 
-// write single item
+// write single post
 func Single(c *fiber.Ctx) error {
 	type Param struct {
 		ID int `json:"id"`
@@ -127,13 +127,13 @@ func Single(c *fiber.Ctx) error {
 		slog.Error(err.Error())
 		return err
 	}
-	item, err := model.GetPost(param.ID)
+	post, err := model.GetPost(param.ID)
 	if err != nil {
 		slog.Error(err.Error())
 		return err
 	}
 	err = c.Render("single", fiber.Map{
-		"Item": item,
+		"Post": post,
 	})
 	if err != nil {
 		slog.Error(err.Error())
