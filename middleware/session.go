@@ -1,9 +1,13 @@
 package middleware
 
 import (
+	"log/slog"
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/storage/sqlite3"
+	"github.com/usysrc/nibbu/model"
 )
 
 var sessionStore *session.Store
@@ -27,6 +31,27 @@ func SessionMiddleware(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not create session"})
 	}
 	c.Locals("session", sess)
+	return c.Next()
+}
+
+func UserMiddleware(c *fiber.Ctx) error {
+	sess := c.Locals("session").(*session.Session)
+	userID := sess.Get("userID")
+	user := &model.User{}
+	if userID != nil {
+		id, err := strconv.Atoi(userID.(string))
+		if err != nil {
+			slog.Error(err.Error())
+			return err
+		}
+		user, err = model.GetUserByID(id)
+		if err != nil {
+			slog.Error(err.Error())
+			return err
+		}
+		user.LoggedIn = true
+	}
+	c.Locals("user", user)
 	return c.Next()
 }
 

@@ -97,6 +97,7 @@ func setupDefaultApp(engine *html.Engine) *fiber.App {
 	// Add the session middleware
 	middleware.CreateSessionStore()
 	defaultApp.Use(middleware.SessionMiddleware)
+	defaultApp.Use(middleware.UserMiddleware)
 
 	// Define routes
 	defaultApp.Get("/", controller.Index)

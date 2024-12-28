@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/usysrc/nibbu/model"
 )
 
@@ -31,22 +30,7 @@ func CreatePost(c *fiber.Ctx) error {
 		return err
 	}
 
-	sess := c.Locals("session").(*session.Session)
-	userID := sess.Get("userID")
-	user := &model.User{}
-	if userID != nil {
-		id, err := strconv.Atoi(userID.(string))
-		if err != nil {
-			slog.Error(err.Error())
-			return err
-		}
-		user, err = model.GetUserByID(id)
-		if err != nil {
-			slog.Error(err.Error())
-			return err
-		}
-		user.LoggedIn = true
-	}
+	user := c.Locals("user").(*model.User)
 
 	newPost.Author = user.Username
 	newPost.Date = time.Now().Format("2006-01-02 15:04:05")
@@ -71,22 +55,7 @@ func UpdatePost(c *fiber.Ctx) error {
 		return err
 	}
 
-	sess := c.Locals("session").(*session.Session)
-	userID := sess.Get("userID")
-	user := &model.User{}
-	if userID != nil {
-		id, err := strconv.Atoi(userID.(string))
-		if err != nil {
-			slog.Error(err.Error())
-			return err
-		}
-		user, err = model.GetUserByID(id)
-		if err != nil {
-			slog.Error(err.Error())
-			return err
-		}
-		user.LoggedIn = true
-	}
+	user := c.Locals("user").(*model.User)
 
 	post.Author = user.Username
 	// post.Date = time.Now().Format("2006-01-02 15:04:05")
@@ -144,23 +113,7 @@ func Single(c *fiber.Ctx) error {
 
 // render the new post page
 func NewPost(c *fiber.Ctx) error {
-	sess := c.Locals("session").(*session.Session)
-	userID := sess.Get("userID")
-	user := &model.User{}
-	if userID != nil {
-		id, err := strconv.Atoi(userID.(string))
-		if err != nil {
-			slog.Error(err.Error())
-			return err
-		}
-		user, err = model.GetUserByID(id)
-		if err != nil {
-			slog.Error(err.Error())
-			return err
-		}
-		user.LoggedIn = true
-	}
-
+	user := c.Locals("user").(*model.User)
 	return c.Render("posts-new", fiber.Map{
 		"User": user,
 	}, "layout")
@@ -168,23 +121,7 @@ func NewPost(c *fiber.Ctx) error {
 
 // edit a post
 func EditPost(c *fiber.Ctx) error {
-	sess := c.Locals("session").(*session.Session)
-	userID := sess.Get("userID")
-	user := &model.User{}
-	if userID != nil {
-		id, err := strconv.Atoi(userID.(string))
-		if err != nil {
-			slog.Error(err.Error())
-			return err
-		}
-		user, err = model.GetUserByID(id)
-		if err != nil {
-			slog.Error(err.Error())
-			return err
-		}
-		user.LoggedIn = true
-	}
-
+	user := c.Locals("user").(*model.User)
 	post, err := model.GetPostByUrl(c.Params("url"))
 	if err != nil {
 		slog.Error(err.Error())
@@ -199,23 +136,7 @@ func EditPost(c *fiber.Ctx) error {
 
 // render the posts page
 func Posts(c *fiber.Ctx) error {
-	sess := c.Locals("session").(*session.Session)
-	userID := sess.Get("userID")
-	user := &model.User{}
-	if userID != nil {
-		id, err := strconv.Atoi(userID.(string))
-		if err != nil {
-			slog.Error(err.Error())
-			return err
-		}
-		user, err = model.GetUserByID(id)
-		if err != nil {
-			slog.Error(err.Error())
-			return err
-		}
-		user.LoggedIn = true
-	}
-
+	user := c.Locals("user").(*model.User)
 	posts, err := model.GetAllPostsFromUser(user.Username)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
