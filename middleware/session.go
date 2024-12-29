@@ -5,12 +5,13 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/csrf"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/storage/sqlite3"
 	"github.com/usysrc/nibbu/model"
 )
 
-var sessionStore *session.Store
+var SessionStore *session.Store
 
 func CreateSessionStore() {
 	// Create a SQLite storage instance
@@ -19,14 +20,14 @@ func CreateSessionStore() {
 		Table:    "sessions",           // Table name for storing session data
 	})
 
-	sessionStore = session.New(session.Config{
+	SessionStore = session.New(session.Config{
 		Storage: storage, // Use the SQLite storage
 	})
 }
 
 // Middleware to initialize session
-func SessionMiddleware(c *fiber.Ctx) error {
-	sess, err := sessionStore.Get(c)
+func Session(c *fiber.Ctx) error {
+	sess, err := SessionStore.Get(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not create session"})
 	}
@@ -34,7 +35,7 @@ func SessionMiddleware(c *fiber.Ctx) error {
 	return c.Next()
 }
 
-func UserMiddleware(c *fiber.Ctx) error {
+func User(c *fiber.Ctx) error {
 	sess := c.Locals("session").(*session.Session)
 	userID := sess.Get("userID")
 	user := &model.User{}
@@ -56,11 +57,27 @@ func UserMiddleware(c *fiber.Ctx) error {
 }
 
 // Middleware to protect routes
-func AuthMiddleware(c *fiber.Ctx) error {
+func Auth(c *fiber.Ctx) error {
 	sess := c.Locals("session").(*session.Session)
 	userID := sess.Get("userID")
 	if userID == nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 	return c.Next()
+}
+
+// Returns a fiber.Handler to be used as Middleware to enable CSRF
+func CreateCSRF() fiber.Handler {
+	return csrf.New(csrf.Config{
+		KeyLookup:      "form:_csrf",
+		ContextKey:     "csrf",
+		CookieName:     "csrf_",
+		CookieSameSite: "Lax",
+		CookieSecure:   false, // !TODO: set to true in production
+		Session:        SessionStore,
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			slog.Error(err.Error())
+			return err
+		},
+	})
 }

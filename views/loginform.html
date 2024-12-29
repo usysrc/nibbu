@@ -4,6 +4,7 @@
     <a href="/logout"><button>logout</button></a>
     {{ else }}
     <form hx-boost=" true" hx-post="/loginuser" hx-ext="json" hx-target="#login" hx-swap="innerHTML">
+        {{ template "csrf" . }}
         Username
         <input type="text" name="username" placeholder="" required>
         Password

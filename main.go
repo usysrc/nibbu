@@ -33,7 +33,8 @@ func main() {
 
 	// Start fiber
 	app := fiber.New(fiber.Config{
-		Views: engine,
+		Views:             engine,
+		PassLocalsToViews: true,
 	})
 	model.Connect()
 	defer model.Close()
@@ -47,6 +48,7 @@ func main() {
 		subdomain := fiber.New(fiber.Config{
 			EnablePrintRoutes: true,
 			Views:             engine,
+			PassLocalsToViews: true,
 		})
 		// Serve static files
 		subdomain.Static("/", "./public")
@@ -73,7 +75,7 @@ func main() {
 	})
 
 	// Start server
-	if err := app.Listen(":3000"); err != nil {
+	if err := app.Listen("localhost:3000"); err != nil {
 		slog.Error(err.Error())
 	}
 }
@@ -82,6 +84,7 @@ func setupDefaultApp(engine *html.Engine) *fiber.App {
 	defaultApp := fiber.New(fiber.Config{
 		Views:             engine,
 		EnablePrintRoutes: true,
+		PassLocalsToViews: true,
 	})
 
 	// Ignore favicon requests
@@ -96,14 +99,18 @@ func setupDefaultApp(engine *html.Engine) *fiber.App {
 
 	// Add the session middleware
 	middleware.CreateSessionStore()
-	defaultApp.Use(middleware.SessionMiddleware)
-	defaultApp.Use(middleware.UserMiddleware)
+	defaultApp.Use(middleware.Session)
+	defaultApp.Use(middleware.User)
+
+	// Add the CSRF middleware
+	csrfMiddleware := middleware.CreateCSRF()
+	defaultApp.Use(csrfMiddleware)
 
 	// Define routes
 	defaultApp.Get("/", controller.Index)
 	defaultApp.Get("/login", controller.Login)
-	defaultApp.Get("/posts/edit/:url", middleware.AuthMiddleware, controller.EditPost)
-	defaultApp.Delete("/posts/delete/:id", middleware.AuthMiddleware, controller.DeletePost)
+	defaultApp.Get("/posts/edit/:url", middleware.Auth, controller.EditPost)
+	defaultApp.Delete("/posts/delete/:id", middleware.Auth, controller.DeletePost)
 	defaultApp.Post("/posts", controller.CreatePost)
 	defaultApp.Put("/posts", controller.UpdatePost)
 	defaultApp.Post("/loginuser", controller.LoginUser)
@@ -111,7 +118,7 @@ func setupDefaultApp(engine *html.Engine) *fiber.App {
 	defaultApp.Get("/logout", controller.Logout)
 	defaultApp.Get("/register", controller.Register)
 	defaultApp.Post("/registeruser", controller.RegisterUser)
-	defaultApp.Get("/posts/new", middleware.AuthMiddleware, controller.NewPost)
+	defaultApp.Get("/posts/new", middleware.Auth, controller.NewPost)
 	defaultApp.Get("/posts", controller.Posts)
 
 	// Add the 404 handler

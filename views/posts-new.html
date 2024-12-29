@@ -8,6 +8,7 @@
 
 <br>
 <form hx-boost="true" hx-post="/posts" hx-ext="json" hx-target="#status" hx-swap="innerHTML">
+    {{ template "csrf" .}}
     <button>Save</button>
     <br>
     <label>Title</label>

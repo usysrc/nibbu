@@ -1,5 +1,6 @@
 <div id="register">
     <form hx-boost="true" hx-post="/registeruser" hx-ext="json" hx-target="#register" hx-swap="innerHTML">
+        {{ template "csrf" .}}
         Username
         <input type="text" name="username" placeholder="" required>
         Password
