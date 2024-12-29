@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/favicon"
 	"github.com/gofiber/template/html/v2"
 	_ "github.com/mattn/go-sqlite3"
@@ -60,7 +59,7 @@ func main() {
 	hosts["localhost:3000"] = &Host{defaultApp}
 
 	for host := range hosts {
-		log.Debug(host)
+		slog.Debug(host)
 	}
 
 	// Add the host routing
