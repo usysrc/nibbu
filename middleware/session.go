@@ -29,14 +29,20 @@ func CreateSessionStore() {
 func Session(c *fiber.Ctx) error {
 	sess, err := SessionStore.Get(c)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not create session"})
+		slog.Error(err.Error())
+		return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
 	}
 	c.Locals("session", sess)
 	return c.Next()
 }
 
+// Middleware to get the user
 func User(c *fiber.Ctx) error {
-	sess := c.Locals("session").(*session.Session)
+	sess, ok := c.Locals("session").(*session.Session)
+	if !ok {
+		slog.Error("No session struct found in locals.")
+		return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
+	}
 	userID := sess.Get("userID")
 	user := &model.User{}
 	if userID != nil {
@@ -58,7 +64,11 @@ func User(c *fiber.Ctx) error {
 
 // Middleware to protect routes
 func Auth(c *fiber.Ctx) error {
-	sess := c.Locals("session").(*session.Session)
+	sess, ok := c.Locals("session").(*session.Session)
+	if !ok {
+		slog.Error("No session struct found in locals.")
+		return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
+	}
 	userID := sess.Get("userID")
 	if userID == nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})

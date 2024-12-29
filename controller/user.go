@@ -58,7 +58,8 @@ func RegisterUser(c *fiber.Ctx) error {
 
 	sess, ok := c.Locals("session").(*session.Session)
 	if !ok {
-		return c.Render("loginform", fiber.Map{})
+		slog.Error("'session' not found in locals.")
+		return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
 	}
 	sess.Set("userID", user.ID)
 	sess.Save()
@@ -72,7 +73,8 @@ func RegisterUser(c *fiber.Ctx) error {
 func Login(c *fiber.Ctx) error {
 	sess, ok := c.Locals("session").(*session.Session)
 	if !ok {
-		return c.Render("loginform", fiber.Map{})
+		slog.Error("session' not found in locals.")
+		return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
 	}
 	userID := sess.Get("userID")
 	user := &model.User{}
@@ -120,7 +122,8 @@ func LoginUser(c *fiber.Ctx) error {
 
 	sess, ok := c.Locals("session").(*session.Session)
 	if !ok {
-		return c.Render("loginform", fiber.Map{})
+		slog.Error("'User' not found in locals.")
+		return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
 	}
 	sess.Set("userID", user.ID)
 	sess.Save()

@@ -9,7 +9,10 @@ import (
 
 // write the index
 func Index(c *fiber.Ctx) error {
-	user := c.Locals("user").(*model.User)
+	user, ok := c.Locals("user").(*model.User)
+	if !ok {
+		slog.Error("User was not set in locals.")
+	}
 
 	err := c.Render("index", fiber.Map{
 		"User": user,

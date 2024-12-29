@@ -60,7 +60,7 @@ func main() {
 	hosts["localhost:3000"] = &Host{defaultApp}
 
 	for host := range hosts {
-		log.Info(host)
+		log.Debug(host)
 	}
 
 	// Add the host routing
