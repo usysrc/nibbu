@@ -183,3 +183,21 @@ func DeletePost(c *fiber.Ctx) error {
 	c.Response().Header.Add("hx-redirect", "/posts")
 	return nil
 }
+
+func PreviewPost(c *fiber.Ctx) error {
+	user, ok := c.Locals("user").(*model.User)
+	if !ok {
+		slog.Error("'User' not found in locals.")
+		return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
+	}
+	post, err := model.GetPostByUrl(c.Params("url"))
+	if err != nil {
+		slog.Error(err.Error())
+		return err
+	}
+
+	return c.Render("preview", fiber.Map{
+		"User": user,
+		"Post": post,
+	}, "layout")
+}

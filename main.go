@@ -109,6 +109,7 @@ func setupDefaultApp(engine *html.Engine) *fiber.App {
 	defaultApp.Get("/", controller.Index)
 	defaultApp.Get("/login", controller.Login)
 	defaultApp.Get("/posts/edit/:url", middleware.Auth, controller.EditPost)
+	defaultApp.Get("/posts/preview/:url", middleware.Auth, controller.PreviewPost)
 	defaultApp.Delete("/posts/delete/:id", middleware.Auth, controller.DeletePost)
 	defaultApp.Post("/posts", controller.CreatePost)
 	defaultApp.Put("/posts", controller.UpdatePost)
