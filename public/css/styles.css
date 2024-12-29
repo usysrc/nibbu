@@ -63,3 +63,18 @@ pre {
     font-size: large;
     font-weight: normal;
 }
+
+ul {
+    list-style-type: none;
+    padding: unset;
+    margin: unset;
+}
+
+li {
+    padding: unset;
+    display: flex;
+}
+
+span.date {
+    flex: 0 0 15rem;
+}

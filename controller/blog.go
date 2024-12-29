@@ -16,3 +16,13 @@ func ShowBlog(c *fiber.Ctx) error {
 		"Posts": posts,
 	}, "layout")
 }
+
+func SingleBlogPost(c *fiber.Ctx) error {
+	post, err := model.GetPostByUrl(c.Params("url"))
+	if err != nil {
+		slog.Error(err.Error())
+	}
+	return c.Render("blog-single", fiber.Map{
+		"Post": post,
+	}, "layout")
+}

@@ -1,5 +1,10 @@
+<a href="/">
+    <h1>{{ .blog }}</h1>
+</a>
+
 {{ range .Posts }}
-{{ .Name }}
-{{ .Content | markdown }}
-{{ .Date }}
+<ul>
+    <li><span class="date">{{ .Date | date }}</span><a href="/{{ .URL }}">{{ .Name }}</a></li>
+    <!-- {{ .Content | markdown }} -->
+</ul>
 {{ end }}
