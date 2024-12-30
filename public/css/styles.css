@@ -64,13 +64,14 @@ pre {
     font-weight: normal;
 }
 
-ul {
+ul.posts {
     list-style-type: none;
     padding: unset;
     margin: unset;
+    margin-top: 1rem;
 }
 
-li {
+ul.posts li {
     padding: unset;
     display: flex;
 }
