@@ -5,10 +5,12 @@
 
 <h1>Posts</h1>
 {{ template "navigation" . }}
-<ul>
+<br>
+<a href="/posts/new"><button>New Post</button></a>
+<a href="http://{{ .User.Username }}.localhost:3000">Blog</a>
+<ul class="posts">
     {{ range .Posts }}
-    <li>{{ .Date | date }} <a href="/posts/edit/{{ .URL }}">{{ .Name }}</a></li>
+    <li><span class="date">{{ .Date | date }}</span><a href="/posts/edit/{{ .URL }}">{{ .Name }}</a></li>
+    <hr>
     {{ end }}
 </ul>
-<hr>
-<a href="/posts/new"><button>New Post</button></a>
