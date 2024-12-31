@@ -8,7 +8,7 @@ import (
 )
 
 func ShowBlog(c *fiber.Ctx) error {
-	posts, err := model.GetAllPostsFromUser(c.Locals("blog").(string))
+	posts, err := model.GetAllPublishedPostsFromUser(c.Locals("blog").(string))
 	if err != nil {
 		slog.Error(err.Error())
 	}

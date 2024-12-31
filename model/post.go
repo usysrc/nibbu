@@ -17,7 +17,7 @@ type Post struct {
 }
 
 func GetAllPostsFromUser(user string) ([]Post, error) {
-	rows, err := db.Query("SELECT id, name, content, url, author, date FROM post WHERE author = ($1)", user)
+	rows, err := db.Query("SELECT id, name, content, url, author, date, published FROM post WHERE author = ($1)", user)
 	if err != nil {
 		slog.Error(err.Error())
 		return nil, err
@@ -27,7 +27,30 @@ func GetAllPostsFromUser(user string) ([]Post, error) {
 	var posts []Post
 	for rows.Next() {
 		post := Post{}
-		err := rows.Scan(&post.ID, &post.Name, &post.Content, &post.URL, &post.Author, &post.Date)
+		err := rows.Scan(&post.ID, &post.Name, &post.Content, &post.URL, &post.Author, &post.Date, &post.Published)
+		if err != nil {
+			slog.Error(err.Error())
+		}
+		if err != nil {
+			slog.Error(err.Error())
+		}
+		posts = append(posts, post)
+	}
+	return posts, nil
+}
+
+func GetAllPublishedPostsFromUser(user string) ([]Post, error) {
+	rows, err := db.Query("SELECT id, name, content, url, author, date, published FROM post WHERE author = ($1) AND published = 'public'", user)
+	if err != nil {
+		slog.Error(err.Error())
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []Post
+	for rows.Next() {
+		post := Post{}
+		err := rows.Scan(&post.ID, &post.Name, &post.Content, &post.URL, &post.Author, &post.Date, &post.Published)
 		if err != nil {
 			slog.Error(err.Error())
 		}
@@ -63,8 +86,8 @@ func GetAllPosts() ([]Post, error) {
 }
 
 func NewPost(newPost Post) error {
-	_, err := db.Exec("INSERT INTO post (name, content, url, author, date) VALUES ($1, $2, $3, $4, $5)",
-		newPost.Name, newPost.Content, newPost.URL, newPost.Author, newPost.Date)
+	_, err := db.Exec("INSERT INTO post (name, content, url, author, date, published) VALUES ($1, $2, $3, $4, $5, $6)",
+		newPost.Name, newPost.Content, newPost.URL, newPost.Author, newPost.Date, newPost.Published)
 	if err != nil {
 		return err
 	}
@@ -105,7 +128,7 @@ func GetPost(id int) (*Post, error) {
 }
 
 func GetPostByUrl(url string) (*Post, error) {
-	rows, err := db.Query("SELECT id, name, content, url, author, date FROM post WHERE url = ($1)", url)
+	rows, err := db.Query("SELECT id, name, content, url, author, date, published FROM post WHERE url = ($1)", url)
 	if err != nil {
 		slog.Error(err.Error())
 		return nil, err
@@ -117,7 +140,7 @@ func GetPostByUrl(url string) (*Post, error) {
 		slog.Error(err.Error())
 		return nil, err
 	}
-	err = rows.Scan(&post.ID, &post.Name, &post.Content, &post.URL, &post.Author, &post.Date)
+	err = rows.Scan(&post.ID, &post.Name, &post.Content, &post.URL, &post.Author, &post.Date, &post.Published)
 	if err != nil {
 		slog.Error(err.Error())
 		return nil, err
@@ -142,5 +165,43 @@ func DeletePost(id int) error {
 		return fmt.Errorf("no post found with ID %d", id)
 	}
 
+	return nil
+}
+
+func PublishPost(id int) error {
+	query := "UPDATE post SET published = 'public' WHERE ID = ?"
+	result, err := db.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("could not execute delete query: %w", err)
+	}
+
+	// Check the number of affected rows (optional)
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("could not fetch affected rows: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no post found with ID %d", id)
+	}
+	return nil
+}
+
+func UnpublishPost(id int) error {
+	query := "UPDATE post SET published = 'draft' WHERE ID = ?"
+	result, err := db.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("could not execute delete query: %w", err)
+	}
+
+	// Check the number of affected rows (optional)
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("could not fetch affected rows: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no post found with ID %d", id)
+	}
 	return nil
 }

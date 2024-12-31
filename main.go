@@ -123,6 +123,8 @@ func setupDefaultApp(engine *html.Engine) *fiber.App {
 	defaultApp.Get("/posts/edit/:url", middleware.Auth, controller.EditPost)
 	defaultApp.Get("/posts/preview/:url", middleware.Auth, controller.PreviewPost)
 	defaultApp.Delete("/posts/delete/:id", middleware.Auth, controller.DeletePost)
+	defaultApp.Post("/posts/publish/:id", middleware.Auth, controller.PublishPost)
+	defaultApp.Post("/posts/unpublish/:id", middleware.Auth, controller.UnpublishPost)
 	defaultApp.Post("/posts", middleware.Auth, controller.CreatePost)
 	defaultApp.Put("/posts", middleware.Auth, controller.UpdatePost)
 	defaultApp.Post("/loginuser", controller.LoginUser)
@@ -134,9 +136,9 @@ func setupDefaultApp(engine *html.Engine) *fiber.App {
 	defaultApp.Get("/posts", middleware.Auth, controller.Posts)
 
 	// Add the 404 handler
-	// defaultApp.Use(func(c *fiber.Ctx) error {
-	// 	return c.Render("404", fiber.Map{}, "layout")
-	// })
+	defaultApp.Use(func(c *fiber.Ctx) error {
+		return c.Render("404", fiber.Map{}, "layout")
+	})
 
 	return defaultApp
 }

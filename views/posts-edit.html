@@ -11,7 +11,17 @@
     {{ template "csrf" .}}
     <button hx-delete="/posts/delete/{{ .Post.ID }}" hx-target="#status"
         hx-confirm="Are you sure you want to delete this?">Delete</button>
-    <button hx-patch="/posts" hx-ext="json" hx-target="#status" hx-swap="innerHTML">Publish</button>
+
+    {{ if eq .Post.Published "draft" }}
+    <button hx-post="/posts/publish/{{ .Post.ID }}" hx-ext="json" hx-target=".content"
+        hx-swap="innerHTML">Publish</button>
+    {{ end }}
+
+    {{ if eq .Post.Published "public" }}
+    <button hx-post="/posts/unpublish/{{ .Post.ID }}" hx-ext="json" hx-target=".content"
+        hx-swap="innerHTML">Unpublish</button>
+    {{ end }}
+
     <button>Save</button>
     <a href="/posts/preview/{{ .Post.URL }}" target="_blank">Preview</a>
     <br>

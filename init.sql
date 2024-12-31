@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS user (
     password TEXT NOT NULL
 );
 
-
 -- post table
 CREATE TABLE IF NOT EXISTS post (
     id      INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -16,6 +15,7 @@ CREATE TABLE IF NOT EXISTS post (
     url     VARCHAR NOT NULL,
     author  INTEGER,
     date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    published VARCHAR,
     FOREIGN KEY(author) REFERENCES user(id)
 );
 

@@ -5,6 +5,5 @@
 {{ range .Posts }}
 <ul class="posts">
     <li><span class="date">{{ .Date | date }}</span><a href="/{{ .URL }}">{{ .Name }}</a></li>
-    <!-- {{ .Content | markdown }} -->
 </ul>
 {{ end }}

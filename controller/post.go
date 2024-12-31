@@ -39,6 +39,7 @@ func CreatePost(c *fiber.Ctx) error {
 	newPost.Author = user.Username
 	newPost.Date = time.Now().Format("2006-01-02 15:04:05")
 	newPost.URL = template.URL(customURLEncode(newPost.Name))
+	newPost.Published = "draft"
 
 	err := model.NewPost(newPost)
 	if err != nil {
@@ -200,4 +201,32 @@ func PreviewPost(c *fiber.Ctx) error {
 		"User": user,
 		"Post": post,
 	}, "layout")
+}
+
+func PublishPost(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return err
+	}
+	err = model.PublishPost(id)
+	if err != nil {
+		slog.Error(err.Error())
+		return err
+	}
+	c.Response().Header.Add("hx-refresh", "true")
+	return c.SendString("Published!")
+}
+
+func UnpublishPost(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return err
+	}
+	err = model.UnpublishPost(id)
+	if err != nil {
+		slog.Error(err.Error())
+		return err
+	}
+	c.Response().Header.Add("hx-refresh", "true")
+	return c.SendString("Published!")
 }

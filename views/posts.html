@@ -1,16 +1,17 @@
 <pre>
 (\/)
-(=>>)_旦
+(='')_旦
 </pre>
 
 <h1>Posts</h1>
 {{ template "navigation" . }}
 <br>
 <a href="/posts/new"><button>New Post</button></a>
-<a href="http://{{ .User.Username }}.localhost:3000">Blog</a>
+<a href="http://{{ .User.Username }}.localhost:3000" target="_blank">Blog</a>
 <ul class="posts">
     {{ range .Posts }}
-    <li><span class="date">{{ .Date | date }}</span><a href="/posts/edit/{{ .URL }}">{{ .Name }}</a></li>
+    <li><span class="date">{{ .Date | date }}</span><a href="/posts/edit/{{ .URL }}">{{ .Name }}</a>
+        ({{ .Published }})</li>
     <hr>
     {{ end }}
 </ul>
