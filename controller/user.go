@@ -136,7 +136,7 @@ func Logout(c *fiber.Ctx) error {
 	if sess, ok := c.Locals("session").(*session.Session); ok {
 		sess.Destroy()
 	}
-	return c.Render("login", fiber.Map{}, "layout")
+	return c.Redirect("/")
 }
 
 type Subdomain string

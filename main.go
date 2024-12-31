@@ -126,7 +126,7 @@ func setupDefaultApp(engine *html.Engine) *fiber.App {
 	defaultApp.Post("/posts", middleware.Auth, controller.CreatePost)
 	defaultApp.Put("/posts", middleware.Auth, controller.UpdatePost)
 	defaultApp.Post("/loginuser", controller.LoginUser)
-	defaultApp.Post("/logout", middleware.Auth, controller.Logout)
+	defaultApp.Post("/logout", controller.Logout)
 	defaultApp.Get("/logout", middleware.Auth, controller.Logout)
 	defaultApp.Get("/register", controller.Register)
 	defaultApp.Post("/registeruser", controller.RegisterUser)
