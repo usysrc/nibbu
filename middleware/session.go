@@ -27,12 +27,14 @@ func CreateSessionStore() {
 
 // Middleware to initialize session
 func Session(c *fiber.Ctx) error {
-	sess, err := SessionStore.Get(c)
+	session, err := SessionStore.Get(c)
 	if err != nil {
-		slog.Error(err.Error())
 		return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
 	}
-	c.Locals("session", sess)
+	if session.Fresh() {
+		session.Regenerate()
+	}
+	c.Locals("session", session)
 	return c.Next()
 }
 
@@ -43,6 +45,7 @@ func User(c *fiber.Ctx) error {
 		slog.Error("No session struct found in locals.")
 		return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
 	}
+
 	userID := sess.Get("userID")
 	user := &model.User{}
 	if userID != nil {
@@ -52,11 +55,15 @@ func User(c *fiber.Ctx) error {
 			return err
 		}
 		user, err = model.GetUserByID(id)
-		if err != nil {
+		if err != nil { // user not found
 			slog.Error(err.Error())
-			return err
+			if user == nil {
+				user = &model.User{}
+			}
+			user.LoggedIn = false
+		} else {
+			user.LoggedIn = true
 		}
-		user.LoggedIn = true
 	}
 	c.Locals("user", user)
 	return c.Next()

@@ -19,6 +19,15 @@ CREATE TABLE IF NOT EXISTS post (
     FOREIGN KEY(author) REFERENCES user(id)
 );
 
+-- upvote table
+CREATE TABLE IF NOT EXISTS upvotes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ip TEXT NOT NULL,
+    post_id INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(ip, post_id)
+);
+
 -- seed the db
 -- INSERT into user (username,password) VALUES ('test', 'vs');
 -- INSERT into post (name,content,url,author,date) VALUES ('my first blog post','hello world', 'my-first-blog-post', 1, "2021-12-09T16:34:04Z");

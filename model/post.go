@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"log/slog"
 )
 
@@ -204,4 +205,31 @@ func UnpublishPost(id int) error {
 		return fmt.Errorf("no post found with ID %d", id)
 	}
 	return nil
+}
+
+func UpvotePost(id int, ip string) error {
+	// Insert upvote into the database
+	query := `INSERT INTO upvotes (ip, post_id) VALUES (?, ?)`
+	_, err := db.Exec(query, ip, id)
+	if err != nil {
+		if sqliteErr, ok := err.(interface{ ErrorCode() int }); ok && sqliteErr.ErrorCode() == 2067 {
+			// UNIQUE constraint failed
+			return fmt.Errorf("You have already upvoted this post.")
+		}
+		log.Println(err)
+		return fmt.Errorf("Could not register upvote.")
+	}
+	return nil
+}
+
+func GetUpvotesByPostID(id int) (int, error) {
+	var count int
+	query := `SELECT COUNT(*) FROM upvotes WHERE post_id = ?`
+	err := db.QueryRow(query, id).Scan(&count)
+	if err != nil {
+		log.Println(err)
+		return 0, fmt.Errorf("Could not fetch upvote count.")
+	}
+
+	return count, nil
 }

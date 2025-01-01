@@ -3,7 +3,6 @@ package controller
 import (
 	"log/slog"
 	"net/http"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
@@ -71,25 +70,11 @@ func RegisterUser(c *fiber.Ctx) error {
 
 // the login page
 func Login(c *fiber.Ctx) error {
-	sess, ok := c.Locals("session").(*session.Session)
+	user, ok := c.Locals("user").(*model.User)
 	if !ok {
-		slog.Error("session' not found in locals.")
-		return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
-	}
-	userID := sess.Get("userID")
-	user := &model.User{}
-	if userID != nil {
-		id, err := strconv.Atoi(userID.(string))
-		if err != nil {
-			slog.Error(err.Error())
-			return err
+		if user == nil {
+			user = &model.User{}
 		}
-		user, err = model.GetUserByID(id)
-		if err != nil {
-			slog.Error(err.Error())
-			return err
-		}
-		user.LoggedIn = true
 	}
 
 	return c.Render("login", fiber.Map{

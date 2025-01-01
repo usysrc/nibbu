@@ -220,6 +220,7 @@ func PublishPost(c *fiber.Ctx) error {
 func UnpublishPost(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
+		slog.Error(err.Error())
 		return err
 	}
 	err = model.UnpublishPost(id)
@@ -229,4 +230,18 @@ func UnpublishPost(c *fiber.Ctx) error {
 	}
 	c.Response().Header.Add("hx-refresh", "true")
 	return c.SendString("Published!")
+}
+
+func UpvotePost(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		slog.Error(err.Error())
+		return err
+	}
+	err = model.UpvotePost(id, c.IP())
+	if err != nil {
+		slog.Error(err.Error())
+	}
+	c.Response().Header.Add("hx-refresh", "true")
+	return c.SendString("Upvoted!")
 }

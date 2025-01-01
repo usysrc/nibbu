@@ -42,12 +42,10 @@ func GetUserByName(username string) (*User, error) {
 	var user User
 	if !rows.Next() {
 		err := fmt.Errorf("User not found.")
-		slog.Error(err.Error())
 		return nil, err
 	}
 	err = rows.Scan(&user.ID, &user.Username, &user.Password)
 	if err != nil {
-		slog.Error(err.Error())
 		return nil, err
 	}
 	return &user, nil
@@ -56,19 +54,16 @@ func GetUserByName(username string) (*User, error) {
 func GetUserByID(id int) (*User, error) {
 	rows, err := db.Query("SELECT id,username, password FROM user WHERE id = ($1)", id)
 	if err != nil {
-		slog.Error(err.Error())
 		return nil, err
 	}
 	defer rows.Close()
 	var user User
 	if !rows.Next() {
 		err := fmt.Errorf("User not found.")
-		slog.Error(err.Error())
 		return nil, err
 	}
 	err = rows.Scan(&user.ID, &user.Username, &user.Password)
 	if err != nil {
-		slog.Error(err.Error())
 		return nil, err
 	}
 	return &user, nil

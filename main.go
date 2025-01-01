@@ -108,6 +108,9 @@ func setupDefaultApp(engine *html.Engine) *fiber.App {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{}))
 	defaultApp.Use(slogfiber.New(logger))
 
+	// Add the upvote routes
+	defaultApp.Post("/posts/upvote/:id", controller.UpvotePost)
+
 	// Add the session middleware
 	middleware.CreateSessionStore()
 	defaultApp.Use(middleware.Session)
@@ -117,7 +120,7 @@ func setupDefaultApp(engine *html.Engine) *fiber.App {
 	csrfMiddleware := middleware.CreateCSRF()
 	defaultApp.Use(csrfMiddleware)
 
-	// Define routes
+	// Define all other routes
 	defaultApp.Get("/", controller.Index)
 	defaultApp.Get("/login", controller.Login)
 	defaultApp.Get("/posts/edit/:url", middleware.Auth, controller.EditPost)

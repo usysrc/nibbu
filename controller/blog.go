@@ -22,7 +22,12 @@ func SingleBlogPost(c *fiber.Ctx) error {
 	if err != nil {
 		slog.Error(err.Error())
 	}
+	upvotes, err := model.GetUpvotesByPostID(post.ID)
+	if err != nil {
+		slog.Error(err.Error())
+	}
 	return c.Render("blog-single", fiber.Map{
-		"Post": post,
+		"Post":    post,
+		"Upvotes": upvotes,
 	}, "layout")
 }

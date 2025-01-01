@@ -3,3 +3,5 @@
 </a>
 
 {{ .Post.Content | markdown }}
+
+<button hx-post="http://localhost:3000/posts/upvote/{{ .Post.ID }}">upvote({{ .Upvotes }})</button>
