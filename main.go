@@ -16,10 +16,6 @@ import (
 	"github.com/usysrc/nibbu/model"
 )
 
-type Host struct {
-	fiber *fiber.App
-}
-
 func main() {
 	// Initialize standard Go html template engine
 	engine := html.New("./views", ".html")
@@ -37,50 +33,32 @@ func main() {
 	})
 	model.Connect()
 	defer model.Close()
+
 	subdomains, err := controller.GetAllSubdomains()
 	if err != nil {
 		slog.Error(err.Error())
 		return
 	}
-	hosts := map[string]*Host{}
+
+	controller.Hosts = map[string]*controller.Host{}
 	for _, name := range subdomains {
-		subApp := fiber.New(fiber.Config{
-			EnablePrintRoutes: true,
-			Views:             engine,
-			PassLocalsToViews: true,
-		})
-
-		// Ignore Favicon
-		subApp.Use(favicon.New())
-
-		// Add the blog name to the locals
-		subApp.Use(func(c *fiber.Ctx) error {
-			c.Locals("blog", string(name))
-			return c.Next()
-		})
-
-		// Serve static files
-		subApp.Static("/", "./public")
-
-		subApp.Get("/", controller.ShowBlog)
-		subApp.Get("/:url", controller.SingleBlogPost)
-
-		hosts[string(name)+".localhost:3000"] = &Host{subApp}
+		controller.CreateSubdomain(string(name))
 	}
-	defaultApp := setupDefaultApp(engine)
-	hosts["localhost:3000"] = &Host{defaultApp}
 
-	for host := range hosts {
+	defaultApp := setupDefaultApp(engine)
+	controller.Hosts["localhost:3000"] = &controller.Host{Fiber: defaultApp}
+
+	for host := range controller.Hosts {
 		slog.Debug(host)
 	}
 
 	// Add the host routing
 	app.Use(func(c *fiber.Ctx) error {
-		host := hosts[c.Hostname()]
+		host := controller.Hosts[c.Hostname()]
 		if host == nil {
 			return c.Render("404", fiber.Map{}, "layout")
 		} else {
-			host.fiber.Handler()(c.Context())
+			host.Fiber.Handler()(c.Context())
 			return nil
 		}
 	})

@@ -64,6 +64,8 @@ func RegisterUser(c *fiber.Ctx) error {
 	sess.Save()
 	user.LoggedIn = true
 
+	CreateSubdomain(user.Username)
+
 	c.Response().Header.Add("hx-redirect", "/")
 	return nil
 }
@@ -72,9 +74,7 @@ func RegisterUser(c *fiber.Ctx) error {
 func Login(c *fiber.Ctx) error {
 	user, ok := c.Locals("user").(*model.User)
 	if !ok {
-		if user == nil {
-			user = &model.User{}
-		}
+		user = &model.User{}
 	}
 
 	return c.Render("login", fiber.Map{
